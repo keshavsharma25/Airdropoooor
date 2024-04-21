@@ -29,6 +29,7 @@ contract Account is ERC165, IERC1271, IERC6551Account {
 	address public AIRDROP_TOKEN_ADDRESS;
 
 	/* ------------------------------ receive ------------------------------ */
+
 	receive() external payable {}
 
 	/* ----------------------------- modifiers ----------------------------- */
