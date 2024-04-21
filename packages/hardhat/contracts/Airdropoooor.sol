@@ -117,28 +117,6 @@ contract Airdropoooor is ERC4907A, ERC721ABurnable, Ownable {
 			);
 	}
 
-	function contractURI() public view returns (string memory) {
-		return
-			string(
-				abi.encodePacked(
-					"data:application/json;base64,",
-					Base64.encode(
-						bytes(
-							string.concat(
-								"{",
-								'"name": "',
-								name(),
-								'", "description": "Collection of ',
-								name(),
-								'"'
-								"}"
-							)
-						)
-					)
-				)
-			);
-	}
-
 	function _tokenSVG(uint256 _tokenId) internal view returns (string memory) {
 		bool isClaimed = IMaintainer(MAINTAINER_ADDRESS).isClaimed(_tokenId);
 
