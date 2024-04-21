@@ -1,10 +1,11 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Contract } from "ethers";
+import { writeFileSync, readFileSync, accessSync, constants } from "fs";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
- * constructor arguments set to the deployer address
+ * constructor argument set to the deployer address
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
@@ -19,13 +20,27 @@ const deployRegistry: DeployFunction = async function (hre: HardhatRuntimeEnviro
     with a random private key in the .env file (then used on hardhat.config.ts)
     You can run the `yarn account` command to check your balance in every network.
   */
+
+  const argumentJson = {
+    Registry: "0x",
+  };
+
+  try {
+    accessSync("./argument.json", constants.F_OK);
+    console.log("argument.json already exists");
+  } catch (error) {
+    writeFileSync("./argument.json", JSON.stringify(argumentJson, null, 2), "utf8");
+  }
+
+  const argument = JSON.parse(readFileSync("./argument.json", "utf8"));
+
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
   await deploy("Registry", {
     from: deployer,
-    // Contract constructor arguments
-    args: [deployer],
+    // Contract constructor argument
+    args: [],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
@@ -34,7 +49,13 @@ const deployRegistry: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
   // Get the deployed contract to interact with it after deploying.
   const Registry = await hre.ethers.getContract<Contract>("Registry", deployer);
-  console.log("Registry Contract Address is: ", Registry.getAddress());
+  console.log("Registry Contract Address is: ", await Registry.getAddress());
+
+  argument["Registry"] = await Registry.getAddress();
+
+  writeFileSync("./argument.json", JSON.stringify(argument, null, 2), {
+    encoding: "utf8",
+  });
 };
 
 export default deployRegistry;
