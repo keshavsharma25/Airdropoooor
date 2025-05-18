@@ -12,6 +12,9 @@ function Page() {
     functionName: "getRentedTokensForUser",
     args: [address],
   });
+
+  console.log("");
+
   return (
     <div className="flex gap-2 flex-wrap">
       {airdropsData?.map((airdrop, index) => {
